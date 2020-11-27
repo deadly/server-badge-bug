@@ -1,27 +1,78 @@
-import requests
-import random
-import json
-import sys
-running = True
-token = input("Enter you token: ")
+#!/usr/bin/env python3
 
-#messy code, threw it together quick in as little lines as possible
+try:
+    # all the imports needed
+    from termcolor import colored
+    from getpass import getpass
+    import requests
+    import random
+    import json
 
-def request(token, channelID, guildID, messageContent, messageID):
-    baseURL = f"https://discordapp.com/api/channels/{channelID}/messages"
-    headers = { "Authorization":token,
-            "User-Agent":"Mozilla/5.0 (<system-information>) <platform> (<platform-details>) <extensions>",
-            "Content-Type":"application/json", }
-    POSTedJSON =  json.dumps ({"content":messageContent, "nonce": str(random.randrange(5000,5000000)),"tts":False,"message_reference": {"guild_id":guildID,"channel_id":channelID,"message_id":messageID},"allowed_mentions":{"parse":["users","roles","everyone"],"replied_user":True}})
-    requests.post(baseURL, headers = headers, data = POSTedJSON)
-    print('Sent')
 
-while running:
-    resp = input('Server badge exploit made by Seraph#9999 | Type q to exit or press enter to continue: ')
-    if (resp == 'q'):
-        sys.exit()
-    guildID = input("Enter guild id: ") 
-    channelID = input("Enter channel id: ")
-    messageContent = input("Enter the message you want to send with a server badge: ")
-    messageID = input('Enter the id of a reply: ')
-    request(token, channelID, guildID, messageContent, messageID)
+    # function to check if token is valid
+    def check_token(token: str):
+        r = requests.get("https://discordapp.com/api/v6/auth/login", headers = {
+            "Authorization": token
+        })
+        if r.status_code == 200:
+            return True
+        else:
+            return False
+
+    def send_msg(token: str, channelID: int, guildID: int, message, replyID: int):
+        return requests.post(f"https://discordapp.com/api/channels/{channelID}/messages", headers = {
+            "authorization": token,
+            "content-type": "application/json"
+        }, data = json.dumps({
+            "content": message,
+            nonce: str(random.randint(5000, 5000000)),
+            "message_reference": {
+                "guild_id": guildID,
+                "channelID": channelID,
+                "message_id": replyID,
+        },
+            "allowed_mentions": {
+                "parse": ["users", "roles", "everyone"],
+                "replied_user": True
+            }
+        })
+    )
+
+
+    running = False
+
+
+    # token input
+    token_input = True
+    while token_input:
+        token = getpass(f"[{colored('*', 'red')}] Token: ")
+        check = check_token(token)
+        if check == True:
+            print(colored('Token is valid', 'green'))
+            token_input = False
+        else:
+            print(colored('Token is invalid', 'red'))
+            continue
+
+    # while its ready to be used
+    while running:
+        guildID = input("Enter guild id: ")
+        channelID = input("Enter channel id: ")
+        messageContent = input("Enter the message you want to send with a server badge: ")
+        replyID = input('Enter the id of a reply: ')
+        r = send_msg(token, channelID, guildID, messageContent, replyID)
+        if r.status_code == 200:
+            print(colored('Token is valid', 'green'))
+        else:
+            print(colored('Token is valid', 'green'))
+
+
+# error for keyboard interrupt: attempt to close the script
+except KeyboardInterrupt:
+	print(colored('\nBye!', 'green'))
+	exit()
+
+# error importing packages
+except ImportError:
+    print('''Please install packages from requirements.txt
+Use command "pip install -r requirements.txt" to install all the required plugins''')
