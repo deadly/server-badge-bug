@@ -5,4 +5,6 @@ Exploit discovered by Seraph#9999, script improved by [Aldas](https://aldas.me)
 
 ## Screenshot
 
-
+<p align="center">
+    <img src="https://raw.githubusercontent.com/faith/discord-server-badge-exploit/main/screenshot.png" alt="image of user sending messages with server badge">
+</p>
