@@ -25,7 +25,7 @@ try:
             "content-type": "application/json"
         }, data = json.dumps({
             "content": message,
-            nonce: str(random.randint(5000, 5000000)),
+            "nonce": str(random.randrange(5000,5000000)),
             "message_reference": {
                 "guild_id": guildID,
                 "channelID": channelID,
@@ -50,22 +50,28 @@ try:
         if check == True:
             print(colored('Token is valid', 'green'))
             token_input = False
+            running = True
         else:
             print(colored('Token is invalid', 'red'))
             continue
 
     # while its ready to be used
     while running:
-        guildID = input("Enter guild id: ")
-        channelID = input("Enter channel id: ")
-        messageContent = input("Enter the message you want to send with a server badge: ")
-        replyID = input('Enter the id of a reply: ')
+        guildID = int(input("Enter guild id: "))
+        channelID = int(input("Enter channel id: "))
+        messageContent = input("Contents of the message you want to send with a server badge: ")
+        replyID = int(input('Enter the id of a reply: '))
         r = send_msg(token, channelID, guildID, messageContent, replyID)
         if r.status_code == 200:
-            print(colored('Token is valid', 'green'))
+            print(colored('Message sent', 'green'))
         else:
-            print(colored('Token is valid', 'green'))
+            print(colored('Fail sending the message', 'red'))
 
+
+# error handling for when user attempts to input wrong data types
+except ValueError:
+    print("Make sure the value is right")
+    exit()
 
 # error for keyboard interrupt: attempt to close the script
 except KeyboardInterrupt:
