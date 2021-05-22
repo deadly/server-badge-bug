@@ -1,7 +1,7 @@
 # Server Badge Bug
 
 Send messages with the "server" badge next to them. Utilizes a bug on the new reply feature (server badge does not show on mobile sometimes).
-Bug discovered by Seraph#9999
+Bug discovered by me
 
 ## Screenshot
 
